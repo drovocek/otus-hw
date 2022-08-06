@@ -1,5 +1,7 @@
 package ru.otus;
 
+import ru.otus.tester.*;
+
 /**
  * To start the application:
  * ./gradlew build
@@ -8,6 +10,11 @@ package ru.otus;
 public class TestExampleRunner {
 
     public static void main(String[] args) {
-        System.out.println("!!!!!!!!!!");
+        TestClassDefinitionExtractor definitionExtractor = new TestClassDefinitionExtractorImpl();
+        TestExecutor executor = new TestExecutorImpl();
+        TestResultPrinter printer = new TestResultPrinterImpl();
+
+        TestRunner runner = new TestRunner(definitionExtractor, executor, printer);
+        runner.run("ru.otus.TestExample");
     }
 }

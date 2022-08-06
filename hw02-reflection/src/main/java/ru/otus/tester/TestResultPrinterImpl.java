@@ -4,10 +4,6 @@ import java.util.List;
 
 public class TestResultPrinterImpl implements TestResultPrinter {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-
     @Override
     public void print(List<TestResult> results) {
         System.out.println();
@@ -15,9 +11,7 @@ public class TestResultPrinterImpl implements TestResultPrinter {
         System.out.println("| Title | Result | Message |");
         results.forEach(result -> {
             String title = result.getTitle();
-            String info = result.isSuccess() ?
-                    ANSI_GREEN + "success" + ANSI_RESET :
-                    ANSI_RED + "fail" + ANSI_RESET;
+            String info = result.isSuccess() ? "success" : "fail";
             String message = result.getCause()
                     .map(TesterReflectionUtils::findRootCause)
                     .map(Throwable::getMessage)

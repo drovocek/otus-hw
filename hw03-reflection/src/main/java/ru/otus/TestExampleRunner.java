@@ -5,7 +5,7 @@ import ru.otus.tester.*;
 /**
  * To start the application:
  * ./gradlew build
- * java -jar ./hw02-reflection/build/libs/gradleTestExampleRunner-0.1.jar
+ * java -jar ./hw03-reflection/build/libs/gradleTestExampleRunner-0.1.jar
  */
 public class TestExampleRunner {
 

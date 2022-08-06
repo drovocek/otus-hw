@@ -17,12 +17,12 @@ public final class TesterReflectionUtils {
         }
     }
 
-    public static void invokeMethod(Method method, Object instance) throws TestMethodInvokeException {
+    public static void invokeMethod(Method method, Object instance) {
         try {
             method.setAccessible(true);
             method.invoke(instance);
         } catch (Exception e) {
-            throw new TestMethodInvokeException(e);
+            throw new RuntimeException(e);
         }
     }
 

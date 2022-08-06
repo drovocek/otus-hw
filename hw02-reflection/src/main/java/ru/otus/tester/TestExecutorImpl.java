@@ -36,7 +36,7 @@ public class TestExecutorImpl implements TestExecutor {
                     try {
                         invokeMethod(method, testInstance);
                         testResult = new TestResult(method.getName(), true);
-                    } catch (TestMethodInvokeException e) {
+                    } catch (RuntimeException e) {
                         testResult = new TestResult(method.getName(), e.getCause());
                     }
 

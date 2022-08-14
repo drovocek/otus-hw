@@ -1,16 +1,17 @@
 package ru.otus;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class CustomerReverseOrder {
 
-    private final LinkedList<Customer> customers = new LinkedList<>();
+    private final Deque<Customer> stack = new ArrayDeque<>();
 
     public void add(Customer customer) {
-        this.customers.add(customer);
+        this.stack.push(customer);
     }
 
     public Customer take() {
-        return this.customers.pollLast();
+        return this.stack.pop();
     }
 }

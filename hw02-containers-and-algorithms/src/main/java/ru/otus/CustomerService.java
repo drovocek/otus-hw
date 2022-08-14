@@ -10,18 +10,11 @@ public class CustomerService {
     private final TreeMap<Customer, String> scoreByCustomer = new TreeMap<>(byScoreAscComparator);
 
     public Map.Entry<Customer, String> getSmallest() {
-        return this.scoreByCustomer.entrySet().stream()
-                .findFirst()
-                .map(this::deepCopy)
-                .orElse(null);
+        return deepCopy(this.scoreByCustomer.firstEntry());
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        return this.scoreByCustomer.entrySet().stream()
-                .filter(e -> this.byScoreAscComparator.reversed().compare(e.getKey(), customer) < 0)
-                .findFirst()
-                .map(this::deepCopy)
-                .orElse(null);
+        return deepCopy(this.scoreByCustomer.higherEntry(customer));
     }
 
     public void add(Customer customer, String data) {

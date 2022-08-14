@@ -1,4 +1,8 @@
-package ru.otus.tester;
+package ru.otus.tester.simple_impl;
+
+import ru.otus.tester.core.TestResult;
+import ru.otus.tester.core.TestResultPrinter;
+import ru.otus.tester.util.TesterReflectionUtils;
 
 import java.util.List;
 

@@ -1,4 +1,6 @@
-package ru.otus.tester;
+package ru.otus.tester.simple_impl;
+
+import ru.otus.tester.core.*;
 
 import java.lang.reflect.Method;
 import java.util.LinkedList;
@@ -6,8 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ru.otus.tester.TesterReflectionUtils.createInstance;
-import static ru.otus.tester.TesterReflectionUtils.invokeMethod;
+import static ru.otus.tester.util.TesterReflectionUtils.createInstance;
+import static ru.otus.tester.util.TesterReflectionUtils.invokeMethod;
 
 public class TestExecutorImpl implements TestExecutor {
 
@@ -16,17 +18,13 @@ public class TestExecutorImpl implements TestExecutor {
         List<Method> testMethods =
                 definition.getMethodsByAnnotationClazz(Test.class);
 
-        LinkedList<Object> testInstances = Stream.generate(() -> createInstance(definition.getSourceClazz()))
-                .limit(testMethods.size())
-                .collect(Collectors.toCollection(LinkedList::new));
-
         System.out.println();
         System.out.println("METHOD CALL STACK BY INSTANCE HASHCODE: ");
         return testMethods.stream()
                 .map(method -> {
                     TestResult testResult;
 
-                    Object testInstance = testInstances.poll();
+                    Object testInstance = createInstance(definition.getSourceClazz());
 
                     List<Method> beforeMethods = definition.getMethodsByAnnotationClazz(Before.class);
                     for (Method beforeMethod : beforeMethods) {

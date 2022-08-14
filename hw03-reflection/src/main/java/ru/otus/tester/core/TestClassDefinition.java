@@ -1,4 +1,4 @@
-package ru.otus.tester;
+package ru.otus.tester.core;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

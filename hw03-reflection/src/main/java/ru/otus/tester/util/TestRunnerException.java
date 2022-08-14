@@ -1,4 +1,4 @@
-package ru.otus.tester;
+package ru.otus.tester.util;
 
 public class TestRunnerException extends RuntimeException{
 

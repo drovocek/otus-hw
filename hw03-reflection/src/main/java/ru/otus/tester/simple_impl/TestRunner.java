@@ -1,4 +1,7 @@
-package ru.otus.tester;
+package ru.otus.tester.simple_impl;
+
+import ru.otus.tester.core.*;
+import ru.otus.tester.util.TestRunnerException;
 
 import java.util.List;
 

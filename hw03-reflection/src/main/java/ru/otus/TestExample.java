@@ -1,6 +1,8 @@
 package ru.otus;
 
-import ru.otus.tester.*;
+import ru.otus.tester.core.After;
+import ru.otus.tester.core.Before;
+import ru.otus.tester.core.Test;
 
 public class TestExample {
 

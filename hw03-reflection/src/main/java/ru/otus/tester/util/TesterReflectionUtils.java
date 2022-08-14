@@ -1,4 +1,4 @@
-package ru.otus.tester;
+package ru.otus.tester.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

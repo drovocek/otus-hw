@@ -1,4 +1,9 @@
-package ru.otus.tester;
+package ru.otus.tester.simple_impl;
+
+import ru.otus.tester.core.Test;
+import ru.otus.tester.core.TestClassDefinition;
+import ru.otus.tester.core.TestClassDefinitionExtractor;
+import ru.otus.tester.util.TestRunnerException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,7 +24,7 @@ public class TestClassDefinitionExtractorImpl implements TestClassDefinitionExtr
                             .filter(annotation -> TESTER_ANNOTATION_TYPES.contains(annotation.annotationType()))
                             .collect(Collectors.toList());
 
-                    if (testerAnnotations.size() != 0) {
+                    if (!testerAnnotations.isEmpty()) {
                         methodByName.put(method.getName(), method);
                         annotationsByMethodName.put(method.getName(), testerAnnotations);
                         testerAnnotations.forEach(annotation -> {

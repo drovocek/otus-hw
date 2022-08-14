@@ -1,6 +1,12 @@
 package ru.otus;
 
-import ru.otus.tester.*;
+import ru.otus.tester.core.TestClassDefinitionExtractor;
+import ru.otus.tester.core.TestExecutor;
+import ru.otus.tester.core.TestResultPrinter;
+import ru.otus.tester.simple_impl.TestClassDefinitionExtractorImpl;
+import ru.otus.tester.simple_impl.TestExecutorImpl;
+import ru.otus.tester.simple_impl.TestResultPrinterImpl;
+import ru.otus.tester.simple_impl.TestRunner;
 
 /**
  * To start the application:

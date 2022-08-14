@@ -2,6 +2,7 @@ package ru.otus;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class CustomerService {
@@ -22,6 +23,8 @@ public class CustomerService {
     }
 
     private Map.Entry<Customer, String> deepCopy(Map.Entry<Customer, String> entry) {
-        return Map.entry(new Customer(entry.getKey()), entry.getValue());
+        return Optional.ofNullable(entry)
+                .map(e -> Map.entry(new Customer(e.getKey()), e.getValue()))
+                .orElse(null);
     }
 }

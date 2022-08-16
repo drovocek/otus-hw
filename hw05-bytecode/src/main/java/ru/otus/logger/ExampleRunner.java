@@ -13,6 +13,7 @@ public class ExampleRunner {
 
     public static void main(String[] args) {
         TestLogging testLogging = (TestLogging) BeanContainer.create(TestLoggingImpl.class);
+        testLogging.someMethodNotAnnotated();
         testLogging.someMethod1();
         testLogging.someMethod2(777);
         testLogging.someMethod3(111, 222);

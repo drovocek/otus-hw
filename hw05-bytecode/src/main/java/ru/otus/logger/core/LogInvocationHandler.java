@@ -2,28 +2,29 @@ package ru.otus.logger.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogInvocationHandler implements InvocationHandler {
 
     private final Object target;
-    private final Map<String, Method> originalMethodsByName = new HashMap<>();
+    private final List<String> logAnnotatedMethodNames = new ArrayList<>();
 
     public LogInvocationHandler(Object target) {
         this.target = target;
 
         for (Method method : target.getClass().getDeclaredMethods()) {
-            this.originalMethodsByName.put(method.getName(), method);
+            if (method.isAnnotationPresent(Log.class)) {
+                this.logAnnotatedMethodNames.add(method.getName());
+            }
         }
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
-        Method originalMethod = originalMethodsByName.get(methodName);
 
-        if (originalMethod.isAnnotationPresent(Log.class)) {
+        if (logAnnotatedMethodNames.contains(methodName)) {
             String logInfo = "executed method: %s".formatted(methodName);
             if (args != null) {
                 int paramIdx = 0;

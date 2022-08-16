@@ -4,6 +4,10 @@ import ru.otus.logger.core.Log;
 
 public class TestLoggingImpl implements TestLogging {
 
+    public void someMethodNotAnnotated() {
+        System.out.println("<<< someMethodNotAnnotated() logic >>>");
+    }
+
     @Log
     public void someMethod1() {
         System.out.println("<<< someMethod1() logic >>>");

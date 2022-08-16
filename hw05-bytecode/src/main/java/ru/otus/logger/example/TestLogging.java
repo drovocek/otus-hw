@@ -2,6 +2,8 @@ package ru.otus.logger.example;
 
 public interface TestLogging {
 
+    void someMethodNotAnnotated();
+
     void someMethod1();
 
     void someMethod2(int param);

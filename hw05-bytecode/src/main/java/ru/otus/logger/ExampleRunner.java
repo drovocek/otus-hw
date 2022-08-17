@@ -16,6 +16,7 @@ public class ExampleRunner {
         testLogging.someMethodNotAnnotated();
         testLogging.someMethod1();
         testLogging.someMethod2(777);
+        testLogging.someMethod2(1, "s");
         testLogging.someMethod3(111, 222);
         testLogging.someMethod4(333, 444, 555);
     }

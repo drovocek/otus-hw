@@ -8,6 +8,8 @@ public interface TestLogging {
 
     void someMethod2(int param);
 
+    void someMethod2(int param1, String param2);
+
     void someMethod3(int param1, int param2);
 
     void someMethod4(int param1, int param2, int param3);

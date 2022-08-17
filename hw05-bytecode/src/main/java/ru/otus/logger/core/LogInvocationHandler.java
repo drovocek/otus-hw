@@ -8,23 +8,29 @@ import java.util.List;
 public class LogInvocationHandler implements InvocationHandler {
 
     private final Object target;
-    private final List<String> logAnnotatedMethodNames = new ArrayList<>();
+    private final List<String> logAnnotatedMethodIds = new ArrayList<>();
 
     public LogInvocationHandler(Object target) {
         this.target = target;
 
         for (Method method : target.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Log.class)) {
-                this.logAnnotatedMethodNames.add(method.getName());
+                this.logAnnotatedMethodIds.add(asId(method));
             }
         }
+    }
+
+    private String asId(Method method) {
+        String[] split = method.toString().split("\\.");
+        return split[split.length - 1];
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
+        String id = asId(method);
 
-        if (logAnnotatedMethodNames.contains(methodName)) {
+        if (logAnnotatedMethodIds.contains(id)) {
             String logInfo = "executed method: %s".formatted(methodName);
             if (args != null) {
                 int paramIdx = 0;

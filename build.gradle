@@ -14,10 +14,10 @@ allprojects {
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
         dependencies {
+            imports {
+                mavenBom "org.springframework.boot:spring-boot-dependencies:${Versions.springBoot}"
+            }
             dependency "com.google.guava:guava:${Versions.guava}"
-            dependency "org.junit.jupiter:junit-jupiter-api:${Versions.junitJupiter}"
-            dependency "org.junit.jupiter:junit-jupiter-engine:${Versions.junitJupiter}"
-            dependency "org.assertj:assertj-core:${Versions.assertj}"
         }
     }
 }

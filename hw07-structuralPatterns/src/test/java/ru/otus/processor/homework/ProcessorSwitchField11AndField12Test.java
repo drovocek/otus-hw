@@ -30,7 +30,18 @@ class ProcessorSwitchField11AndField12Test {
                         .build();
         var messageOut = processor.process(messageIn);
 
+        Assertions.assertEquals(messageIn.getField1(), messageOut.getField1());
+        Assertions.assertEquals(messageIn.getField2(), messageOut.getField2());
+        Assertions.assertEquals(messageIn.getField3(), messageOut.getField3());
+        Assertions.assertEquals(messageIn.getField4(), messageOut.getField4());
+        Assertions.assertEquals(messageIn.getField5(), messageOut.getField5());
+        Assertions.assertEquals(messageIn.getField6(), messageOut.getField6());
+        Assertions.assertEquals(messageIn.getField7(), messageOut.getField7());
+        Assertions.assertEquals(messageIn.getField8(), messageOut.getField8());
+        Assertions.assertEquals(messageIn.getField9(), messageOut.getField9());
+        Assertions.assertEquals(messageIn.getField10(), messageOut.getField10());
         Assertions.assertEquals(messageIn.getField11(), messageOut.getField12());
         Assertions.assertEquals(messageIn.getField12(), messageOut.getField11());
+        Assertions.assertEquals(messageIn.getField13(), messageOut.getField13());
     }
 }

@@ -1,5 +1,7 @@
 package ru.otus.model;
 
+import java.util.Optional;
+
 public class Message {
     private final long id;
     private final String field1;
@@ -52,7 +54,7 @@ public class Message {
         this.field10 = msg.getField10();
         this.field11 = msg.getField11();
         this.field12 = msg.getField12();
-        this.field13 = new ObjectForMessage(msg.getField13());
+        this.field13 = Optional.ofNullable(msg.getField13()).map(ObjectForMessage::new).orElse(null);
     }
 
     public long getId() {

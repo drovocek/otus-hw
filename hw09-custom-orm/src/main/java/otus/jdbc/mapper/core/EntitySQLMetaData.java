@@ -1,4 +1,4 @@
-package otus.jdbc.mapper;
+package otus.jdbc.mapper.core;
 
 /**
  * Создает SQL - запросы

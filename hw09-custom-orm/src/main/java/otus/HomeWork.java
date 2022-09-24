@@ -4,8 +4,10 @@ import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import otus.jdbc.mapper.DataTemplateJdbc;
-import otus.jdbc.mapper.EntityClassMetaData;
-import otus.jdbc.mapper.EntitySQLMetaData;
+import otus.jdbc.mapper.core.EntityClassMetaData;
+import otus.jdbc.mapper.core.EntitySQLMetaData;
+import otus.jdbc.mapper.impl.EntityClassMetaDataImpl;
+import otus.jdbc.mapper.impl.EntitySQLMetaDataImpl;
 import otus.otus.core.repository.executor.DbExecutorImpl;
 import otus.otus.core.sessionmanager.TransactionRunnerJdbc;
 import otus.otus.crm.datasource.DriverManagerDataSource;
@@ -31,8 +33,8 @@ public class HomeWork {
         var dbExecutor = new DbExecutorImpl();
 
 // Работа с клиентом
-        EntityClassMetaData entityClassMetaDataClient; // = new EntityClassMetaDataImpl();
-        EntitySQLMetaData entitySQLMetaDataClient = null; //= new EntitySQLMetaDataImpl(entityClassMetaDataClient);
+        EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<>(Client.class);
+        EntitySQLMetaData entitySQLMetaDataClient = new EntitySQLMetaDataImpl(entityClassMetaDataClient);
         var dataTemplateClient = new DataTemplateJdbc<Client>(dbExecutor, entitySQLMetaDataClient); //реализация DataTemplate, универсальная
 
 // Код дальше должен остаться
@@ -46,8 +48,8 @@ public class HomeWork {
 
 // Сделайте тоже самое с классом Manager (для него надо сделать свою таблицу)
 
-        EntityClassMetaData entityClassMetaDataManager; // = new EntityClassMetaDataImpl();
-        EntitySQLMetaData entitySQLMetaDataManager = null; //= new EntitySQLMetaDataImpl(entityClassMetaDataManager);
+        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(Manager.class);
+        EntitySQLMetaData entitySQLMetaDataManager = new EntitySQLMetaDataImpl(entityClassMetaDataManager);
         var dataTemplateManager = new DataTemplateJdbc<Manager>(dbExecutor, entitySQLMetaDataManager);
 
         var dbServiceManager = new DbServiceManagerImpl(transactionRunner, dataTemplateManager);

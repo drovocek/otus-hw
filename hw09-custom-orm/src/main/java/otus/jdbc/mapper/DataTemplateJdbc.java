@@ -1,5 +1,6 @@
 package otus.jdbc.mapper;
 
+import otus.jdbc.mapper.core.EntitySQLMetaData;
 import otus.otus.core.repository.DataTemplate;
 import otus.otus.core.repository.executor.DbExecutor;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Сохратяет объект в базу, читает объект из базы
+ * Сохраняет объект в базу, читает объект из базы
  */
 public class DataTemplateJdbc<T> implements DataTemplate<T> {
 

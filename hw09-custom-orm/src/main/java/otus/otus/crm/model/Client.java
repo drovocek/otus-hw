@@ -1,6 +1,9 @@
 package otus.otus.crm.model;
 
+import otus.jdbc.mapper.core.Id;
+
 public class Client {
+    @Id
     private Long id;
     private String name;
 

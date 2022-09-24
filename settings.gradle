@@ -3,5 +3,8 @@ include 'hw01-gradle'
 include 'hw02-containers-and-algorithms'
 include 'hw03-reflection'
 include 'hw04-gc'
+include 'hw05-bytecode'
 include 'hw06-gof'
+include 'hw07-structuralPatterns'
+
 

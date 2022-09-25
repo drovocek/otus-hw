@@ -4,8 +4,11 @@ import otus.jdbc.mapper.core.EntitySQLMetaData;
 import otus.otus.core.repository.DataTemplate;
 import otus.otus.core.repository.executor.DbExecutor;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -23,7 +26,10 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public Optional<T> findById(Connection connection, long id) {
-        throw new UnsupportedOperationException();
+        return this.dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectByIdSql(),
+                List.of(id), resultSet -> {
+
+                });
     }
 
     @Override
@@ -33,11 +39,16 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public long insert(Connection connection, T client) {
-        throw new UnsupportedOperationException();
+        return this.dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(), List.of(client));
     }
 
     @Override
     public void update(Connection connection, T client) {
         throw new UnsupportedOperationException();
+    }
+
+    private Map<String, Method> valueExtractor(T client) {
+        Arrays.stream(client.getClass().getDeclaredFields()).filter(field -> field.)
+        return client.s
     }
 }

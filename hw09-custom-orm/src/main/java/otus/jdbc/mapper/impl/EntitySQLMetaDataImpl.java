@@ -3,6 +3,7 @@ package otus.jdbc.mapper.impl;
 import otus.jdbc.mapper.core.EntityClassMetaData;
 import otus.jdbc.mapper.core.EntitySQLMetaData;
 
+import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
@@ -15,15 +16,22 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     public EntitySQLMetaDataImpl(EntityClassMetaData<?> metaData) {
         this.metaData = metaData;
-        this.selectAllSql = "SELECT * FROM %s".formatted(this.metaData.getName());
-        this.selectByIdSql = "SELECT * FROM %s WHERE id=?".formatted(this.metaData.getName());
 
+        String tableName = this.metaData.getName();
+
+        this.selectAllSql = "SELECT * FROM %s".formatted(tableName);
+        this.selectByIdSql = "SELECT * FROM %s WHERE id=?".formatted(tableName);
+
+        String fieldNames = this.metaData.getFieldsWithoutId().stream()
+                .map(Field::getName)
+                .collect(Collectors.joining(", "));
         String values = this.metaData.getFieldsWithoutId().stream()
-                .map(field -> field.getName().concat("=?"))
-                .collect(Collectors.joining(","));
+                .map(field -> "?")
+                .collect(Collectors.joining(", "));
 
-        this.insertSqlSql = "INSERT INTO %s VALUES(%s)".formatted(this.metaData.getName(), values);
-        this.updateSqlSql = "UPDATE %s SET %s WHERE id=?".formatted(this.metaData.getName(), values);
+        this.insertSqlSql = "INSERT INTO %s(%s) VALUES (%s)".formatted(tableName, fieldNames, values);
+        this.updateSqlSql = "UPDATE %s(%s) SET (%s) WHERE id=?".formatted(tableName, fieldNames, values);
+
         System.out.println(this.selectAllSql);
         System.out.println(this.selectByIdSql);
         System.out.println(this.insertSqlSql);

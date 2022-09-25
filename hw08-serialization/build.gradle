@@ -7,7 +7,8 @@ targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
     implementation 'com.google.guava:guava'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.google.code.gson:gson'
+
     implementation 'javax.json:javax.json-api'
     implementation 'org.glassfish:jakarta.json'
     implementation 'com.google.protobuf:protobuf-java-util'

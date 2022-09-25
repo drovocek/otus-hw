@@ -2,6 +2,7 @@ package ru.otus.dataprocessor;
 
 import ru.otus.model.Measurement;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ public class ProcessorAggregator implements Processor {
     @Override
     public Map<String, Double> process(List<Measurement> data) {
         return data.stream()
-                .peek(System.out::println)
+                .sorted(Comparator.comparing(Measurement::getName))
                 .collect(
                         Collectors.groupingBy(Measurement::getName,
                                 LinkedHashMap::new,

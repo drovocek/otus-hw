@@ -1,4 +1,4 @@
-package otus.jdbc.mapper.core;
+package otus.jdbc.mapper.core.metadata;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

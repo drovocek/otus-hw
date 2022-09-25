@@ -1,4 +1,4 @@
-package otus.jdbc.mapper.core;
+package otus.jdbc.mapper.core.metadata;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

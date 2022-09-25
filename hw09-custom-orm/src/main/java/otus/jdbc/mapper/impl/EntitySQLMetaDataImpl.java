@@ -1,61 +1,62 @@
 package otus.jdbc.mapper.impl;
 
-import otus.jdbc.mapper.core.EntityClassMetaData;
-import otus.jdbc.mapper.core.EntitySQLMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import otus.jdbc.mapper.core.metadata.EntityClassMetaData;
+import otus.jdbc.mapper.core.metadata.EntitySQLMetaData;
 
 import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
-    private final EntityClassMetaData<?> metaData;
+    private static final Logger logger = LoggerFactory.getLogger(EntitySQLMetaDataImpl.class);
+
     private final String selectAllSql;
     private final String selectByIdSql;
     private final String insertSqlSql;
     private final String updateSqlSql;
 
     public EntitySQLMetaDataImpl(EntityClassMetaData<?> metaData) {
-        this.metaData = metaData;
-
-        String tableName = this.metaData.getName();
+        String tableName = metaData.getName();
+        String idFieldName = metaData.getIdField().getName();
 
         this.selectAllSql = "SELECT * FROM %s".formatted(tableName);
-        this.selectByIdSql = "SELECT * FROM %s WHERE id=?".formatted(tableName);
+        this.selectByIdSql = "SELECT * FROM %s WHERE %s=?".formatted(tableName, idFieldName);
 
-        String fieldNames = this.metaData.getFieldsWithoutId().stream()
+        String fieldNames = metaData.getFieldsWithoutId().stream()
                 .map(Field::getName)
                 .collect(Collectors.joining(", "));
-        String values = this.metaData.getFieldsWithoutId().stream()
+        String values = metaData.getFieldsWithoutId().stream()
                 .map(field -> "?")
                 .collect(Collectors.joining(", "));
 
         this.insertSqlSql = "INSERT INTO %s(%s) VALUES (%s)".formatted(tableName, fieldNames, values);
-        this.updateSqlSql = "UPDATE %s(%s) SET (%s) WHERE id=?".formatted(tableName, fieldNames, values);
-
-        System.out.println(this.selectAllSql);
-        System.out.println(this.selectByIdSql);
-        System.out.println(this.insertSqlSql);
-        System.out.println(this.updateSqlSql);
+        this.updateSqlSql = "UPDATE %s(%s) SET (%s) WHERE %s=?".formatted(tableName, fieldNames, values, idFieldName);
     }
 
 
     @Override
     public String getSelectAllSql() {
+        logger.info("getSelectAllSql OUT: {}", this.selectAllSql);
         return this.selectAllSql;
     }
 
     @Override
     public String getSelectByIdSql() {
+        logger.info("getSelectByIdSql OUT: {}", this.selectByIdSql);
         return this.selectByIdSql;
     }
 
     @Override
     public String getInsertSql() {
+        logger.info("getInsertSql OUT: {}", this.insertSqlSql);
         return this.insertSqlSql;
     }
 
     @Override
     public String getUpdateSql() {
+        logger.info("getUpdateSql OUT: {}", this.updateSqlSql);
         return this.updateSqlSql;
     }
 }

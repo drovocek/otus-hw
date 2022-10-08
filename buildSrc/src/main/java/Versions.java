@@ -3,4 +3,5 @@ public interface Versions {
     String springBoot = "2.7.2";
     String protobuf = "3.21.1";
     String glassfishJson = "2.0.1";
+    String reflections = "0.10.2";
 }

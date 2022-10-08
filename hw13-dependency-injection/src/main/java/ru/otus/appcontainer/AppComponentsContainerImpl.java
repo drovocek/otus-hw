@@ -14,38 +14,46 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, List<Object>> appComponentsByName = new HashMap<>();
 
-    public AppComponentsContainerImpl(Class<?> initialConfigClass) {
+    public AppComponentsContainerImpl(Class<?>... initialConfigClass) {
         processConfig(initialConfigClass);
     }
 
-    private void processConfig(Class<?> configClass) {
-        checkConfigClass(configClass);
-        Arrays.stream(configClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .sorted((m1, m2) -> {
-                    int order1 = m1.getAnnotation(AppComponent.class).order();
-                    int order2 = m2.getAnnotation(AppComponent.class).order();
+    private void processConfig(Class<?>... configClasses) {
+        checkConfigClass(configClasses);
+        Arrays.stream(configClasses)
+                .sorted((o1, o2) -> {
+                    int order1 = o1.getAnnotation(AppComponentsContainerConfig.class).order();
+                    int order2 = o2.getAnnotation(AppComponentsContainerConfig.class).order();
                     return order1 - order2;
                 })
-                .forEach(method -> {
-                    String beanNameBase = method.getAnnotation(AppComponent.class).name();
-                    if (appComponentsByName.containsKey(beanNameBase)) {
-                        throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
-                    }
-                    Class<?> returnType = method.getReturnType();
-                    String beanNameByType = returnType.getName();
+                .forEach(configClass -> {
+                    Arrays.stream(configClass.getDeclaredMethods())
+                            .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                            .sorted((m1, m2) -> {
+                                int order1 = m1.getAnnotation(AppComponent.class).order();
+                                int order2 = m2.getAnnotation(AppComponent.class).order();
+                                return order1 - order2;
+                            })
+                            .forEach(method -> {
+                                String beanNameBase = method.getAnnotation(AppComponent.class).name();
+                                if (appComponentsByName.containsKey(beanNameBase)) {
+                                    throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
+                                }
+                                Class<?> returnType = method.getReturnType();
+                                String beanNameByType = returnType.getName();
 
-                    Object noArgInstance = getNoArgInstance(configClass);
-                    Object[] args = Arrays.stream(method.getParameterTypes())
-                            .map(par -> getAppComponent(par.getName()))
-                            .toArray(Object[]::new);
-                    Object bean = invokeMethod(method, noArgInstance, args);
+                                Object noArgInstance = getNoArgInstance(configClass);
+                                Object[] args = Arrays.stream(method.getParameterTypes())
+                                        .map(par -> getAppComponent(par.getName()))
+                                        .toArray(Object[]::new);
+                                Object bean = invokeMethod(method, noArgInstance, args);
 
-                    String beanNameByClass = bean.getClass().getName();
+                                String beanNameByClass = bean.getClass().getName();
 
-                    store(beanNameBase, bean);
-                    store(beanNameByType, bean);
-                    store(beanNameByClass, bean);
+                                store(beanNameBase, bean);
+                                store(beanNameByType, bean);
+                                store(beanNameByClass, bean);
+                            });
                 });
     }
 
@@ -55,10 +63,12 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         appComponentsByName.put(name, beans);
     }
 
-    private void checkConfigClass(Class<?> configClass) {
-        if (!configClass.isAnnotationPresent(AppComponentsContainerConfig.class)) {
-            throw new IllegalArgumentException(String.format("Given class is not config %s", configClass.getName()));
-        }
+    private void checkConfigClass(Class<?>... configClasses) {
+        Arrays.stream(configClasses).forEach(configClass -> {
+            if (!configClass.isAnnotationPresent(AppComponentsContainerConfig.class)) {
+                throw new IllegalArgumentException(String.format("Given class is not config %s", configClass.getName()));
+            }
+        });
     }
 
     @Override

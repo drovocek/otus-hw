@@ -5,6 +5,7 @@ import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 import static ru.otus.appcontainer.ContextException.*;
@@ -30,40 +31,37 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         checkConfigClass(configClasses);
 
         Arrays.stream(configClasses)
-                .sorted((o1, o2) -> {
-                    int order1 = o1.getAnnotation(AppComponentsContainerConfig.class).order();
-                    int order2 = o2.getAnnotation(AppComponentsContainerConfig.class).order();
-                    return order1 - order2;
-                })
-                .forEach(configClass -> {
-                    Arrays.stream(configClass.getDeclaredMethods())
-                            .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                            .sorted((m1, m2) -> {
-                                int order1 = m1.getAnnotation(AppComponent.class).order();
-                                int order2 = m2.getAnnotation(AppComponent.class).order();
-                                return order1 - order2;
-                            })
-                            .forEach(method -> {
-                                String beanNameBase = method.getAnnotation(AppComponent.class).name();
-                                if (appComponentsByName.containsKey(beanNameBase)) {
-                                    throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
-                                }
-                                Class<?> returnType = method.getReturnType();
-                                String beanNameByType = returnType.getName();
+                .sorted(Comparator.comparing(o -> o.getAnnotation(AppComponentsContainerConfig.class).order()))
+                .forEach(this::extractAndStore);
+    }
 
-                                Object noArgInstance = getNoArgInstance(configClass);
-                                Object[] args = Arrays.stream(method.getParameterTypes())
-                                        .map(par -> getAppComponent(par.getName()))
-                                        .toArray(Object[]::new);
-                                Object bean = invokeMethod(method, noArgInstance, args);
+    private void extractAndStore(Class<?> configClass) {
+        Arrays.stream(configClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                .sorted(Comparator.comparing(m -> m.getAnnotation(AppComponent.class).order()))
+                .forEach(this::extractAndStore);
+    }
 
-                                String beanNameByClass = bean.getClass().getName();
+    private void extractAndStore(Method method) {
+        Class<?> configClass = method.getDeclaringClass();
+        String beanNameBase = method.getAnnotation(AppComponent.class).name();
+        if (appComponentsByName.containsKey(beanNameBase)) {
+            throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
+        }
+        Class<?> returnType = method.getReturnType();
+        String beanNameByType = returnType.getName();
 
-                                store(beanNameBase, bean);
-                                store(beanNameByType, bean);
-                                store(beanNameByClass, bean);
-                            });
-                });
+        Object noArgInstance = getNoArgInstance(configClass);
+        Object[] args = Arrays.stream(method.getParameterTypes())
+                .map(par -> getAppComponent(par.getName()))
+                .toArray(Object[]::new);
+        Object bean = invokeMethod(method, noArgInstance, args);
+
+        String beanNameByClass = bean.getClass().getName();
+
+        store(beanNameBase, bean);
+        store(beanNameByType, bean);
+        store(beanNameByClass, bean);
     }
 
     private void store(String name, Object bean) {

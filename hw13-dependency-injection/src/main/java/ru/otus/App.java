@@ -1,4 +1,9 @@
-package otus;
+package ru.otus;
+
+import ru.otus.appcontainer.AppComponentsContainerImpl;
+import ru.otus.appcontainer.api.AppComponentsContainer;
+import ru.otus.config.AppConfig;
+import ru.otus.services.GameProcessor;
 
 /*
 В классе AppComponentsContainerImpl реализовать обработку, полученной в конструкторе конфигурации,
@@ -13,11 +18,6 @@ package otus;
 
 PS Приложение представляет собой тренажер таблицы умножения
 */
-
-import otus.appcontainer.AppComponentsContainerImpl;
-import otus.appcontainer.api.AppComponentsContainer;
-import otus.config.AppConfig;
-import otus.services.GameProcessor;
 
 public class App {
 

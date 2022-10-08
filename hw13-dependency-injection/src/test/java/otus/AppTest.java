@@ -4,11 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import otus.appcontainer.AppComponentsContainerImpl;
-import otus.appcontainer.api.AppComponent;
-import otus.appcontainer.api.AppComponentsContainerConfig;
-import otus.config.AppConfig;
-import otus.services.*;
+import ru.otus.appcontainer.AppComponentsContainerImpl;
+import ru.otus.appcontainer.api.AppComponent;
+import ru.otus.appcontainer.api.AppComponentsContainerConfig;
+import ru.otus.config.AppConfig;
+import ru.otus.services.*;
 
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;

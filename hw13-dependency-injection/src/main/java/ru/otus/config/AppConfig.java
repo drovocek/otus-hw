@@ -1,8 +1,8 @@
-package otus.config;
+package ru.otus.config;
 
-import otus.appcontainer.api.AppComponent;
-import otus.appcontainer.api.AppComponentsContainerConfig;
-import otus.services.*;
+import ru.otus.appcontainer.api.AppComponent;
+import ru.otus.appcontainer.api.AppComponentsContainerConfig;
+import ru.otus.services.*;
 
 @AppComponentsContainerConfig(order = 1)
 public class AppConfig {

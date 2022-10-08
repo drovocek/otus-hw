@@ -1,4 +1,4 @@
-package otus.services;
+package ru.otus.services;
 
 public interface GameProcessor {
     void startGame();

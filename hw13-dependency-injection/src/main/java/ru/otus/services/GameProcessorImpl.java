@@ -1,8 +1,8 @@
-package otus.services;
+package ru.otus.services;
 
-import otus.model.Equation;
-import otus.model.GameResult;
-import otus.model.Player;
+import ru.otus.model.Equation;
+import ru.otus.model.GameResult;
+import ru.otus.model.Player;
 
 import java.util.List;
 

@@ -7,6 +7,7 @@ import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static ru.otus.appcontainer.ContextException.*;
 import static ru.otus.appcontainer.ReflectionUtils.*;
@@ -33,44 +34,8 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
         Arrays.stream(configClasses)
                 .sorted(Comparator.comparing(o -> o.getAnnotation(AppComponentsContainerConfig.class).order()))
-                .forEach(this::buildBeansAndStore);
-    }
-
-    private void buildBeansAndStore(Class<?> configClass) {
-        Arrays.stream(configClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .sorted(Comparator.comparing(m -> m.getAnnotation(AppComponent.class).order()))
-                .forEach(this::buildBeanAndStore);
-    }
-
-    private void buildBeanAndStore(Method method) {
-        Class<?> configClass = method.getDeclaringClass();
-        String beanNameBase = method.getAnnotation(AppComponent.class).name();
-        if (appComponentsByName.containsKey(beanNameBase)) {
-            throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
-        }
-
-        Object noArgInstance = getNoArgInstance(configClass);
-        Object[] args = Arrays.stream(method.getParameterTypes())
-                .map(this::getAppComponent)
-                .toArray(Object[]::new);
-        Object bean = invokeMethod(method, noArgInstance, args);
-        Class<?> beanType = bean.getClass();
-
-        this.appComponentsByName.put(beanNameBase, bean);
-        store(beanType, bean);
-
-        Class<?> methodReturnType = method.getReturnType();
-
-        if (methodReturnType != beanType) {
-            store(methodReturnType, bean);
-        }
-    }
-
-    private void store(Class<?> beanType, Object bean) {
-        List<Object> beans = Optional.ofNullable(this.appComponentsByType.get(beanType)).orElse(new ArrayList<>());
-        beans.add(bean);
-        this.appComponentsByType.put(beanType, beans);
+                .flatMap(this::extractBeanData)
+                .forEach(this::store);
     }
 
     private void checkConfigClass(Class<?>... configClasses) {
@@ -79,6 +44,60 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 throw new IllegalArgumentException(String.format("Given class is not config %s", configClass.getName()));
             }
         });
+    }
+
+    private Stream<BeanData> extractBeanData(Class<?> configClass) {
+        return Arrays.stream(configClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                .sorted(Comparator.comparing(m -> m.getAnnotation(AppComponent.class).order()))
+                .map(this::throwIfBeanNameIsRegistered)
+                .map(this::extractBeanData);
+    }
+
+    private Method throwIfBeanNameIsRegistered(Method method){
+        String beanName = method.getAnnotation(AppComponent.class).name();
+        if (appComponentsByName.containsKey(beanName)) {
+            throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanName));
+        }
+        return method;
+    }
+
+    private record BeanData(String name, Object bean, Class<?> parentType) {
+    }
+
+    private BeanData extractBeanData(Method method) {
+        Class<?> configClass = method.getDeclaringClass();
+        String beanName = method.getAnnotation(AppComponent.class).name();
+        Object bean = buildBean(method, configClass);
+
+        return new BeanData(beanName, bean, method.getReturnType());
+    }
+
+    private Object buildBean(Method method, Class<?> configClass) {
+        Object noArgInstance = getNoArgInstance(configClass);
+        Object[] args = Arrays.stream(method.getParameterTypes())
+                .map(this::getAppComponent)
+                .toArray(Object[]::new);
+        return invokeMethod(method, noArgInstance, args);
+    }
+
+    private void store(BeanData beanData) {
+        Object bean = beanData.bean;
+        this.appComponentsByName.put(beanData.name, beanData.bean);
+
+        Class<?> beanType = bean.getClass();
+        store(beanType, bean);
+
+        Class<?> parentType = beanData.parentType();
+        if (parentType != beanType) {
+            store(parentType, bean);
+        }
+    }
+
+    private void store(Class<?> beanType, Object bean) {
+        List<Object> beans = Optional.ofNullable(this.appComponentsByType.get(beanType)).orElse(new ArrayList<>());
+        beans.add(bean);
+        this.appComponentsByType.put(beanType, beans);
     }
 
     @Override

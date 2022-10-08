@@ -1,5 +1,6 @@
 package ru.otus.appcontainer;
 
+import org.reflections.Reflections;
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
@@ -11,8 +12,15 @@ import static ru.otus.appcontainer.ReflectionUtils.*;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
-    private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, List<Object>> appComponentsByName = new HashMap<>();
+
+    public AppComponentsContainerImpl(String configsPath) {
+        Reflections reflections = new Reflections(configsPath);
+        Class<?>[] configClasses = reflections.getTypesAnnotatedWith(AppComponentsContainerConfig.class)
+                .toArray(Class<?>[]::new);
+
+        processConfig(configClasses);
+    }
 
     public AppComponentsContainerImpl(Class<?>... initialConfigClass) {
         processConfig(initialConfigClass);
@@ -20,6 +28,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processConfig(Class<?>... configClasses) {
         checkConfigClass(configClasses);
+
         Arrays.stream(configClasses)
                 .sorted((o1, o2) -> {
                     int order1 = o1.getAnnotation(AppComponentsContainerConfig.class).order();

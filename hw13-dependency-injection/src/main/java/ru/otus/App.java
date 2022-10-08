@@ -2,8 +2,6 @@ package ru.otus;
 
 import ru.otus.appcontainer.AppComponentsContainerImpl;
 import ru.otus.appcontainer.api.AppComponentsContainer;
-import ru.otus.config.AppConfig;
-import ru.otus.config.AppConfig2;
 import ru.otus.services.GameProcessor;
 
 /*
@@ -24,10 +22,10 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         // Опциональные варианты
-        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class, AppConfig2.class);
+        //AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class, AppConfig2.class);
 
         // Тут можно использовать библиотеку Reflections (см. зависимости)
-        //AppComponentsContainer container = new AppComponentsContainerImpl("ru.otus.config");
+        AppComponentsContainer container = new AppComponentsContainerImpl("ru.otus.config");
 
         // Обязательный вариант
      //   AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);

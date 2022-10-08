@@ -13,7 +13,8 @@ import static ru.otus.appcontainer.ReflectionUtils.*;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
-    private final Map<String, List<Object>> appComponentsByName = new HashMap<>();
+    private final Map<String, Object> appComponentsByName = new HashMap<>();
+    private final Map<Class<?>, List<Object>> appComponentsByType = new HashMap<>();
 
     public AppComponentsContainerImpl(String configsPath) {
         Reflections reflections = new Reflections(configsPath);
@@ -32,42 +33,44 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
         Arrays.stream(configClasses)
                 .sorted(Comparator.comparing(o -> o.getAnnotation(AppComponentsContainerConfig.class).order()))
-                .forEach(this::extractAndStore);
+                .forEach(this::buildBeansAndStore);
     }
 
-    private void extractAndStore(Class<?> configClass) {
+    private void buildBeansAndStore(Class<?> configClass) {
         Arrays.stream(configClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(AppComponent.class))
                 .sorted(Comparator.comparing(m -> m.getAnnotation(AppComponent.class).order()))
-                .forEach(this::extractAndStore);
+                .forEach(this::buildBeanAndStore);
     }
 
-    private void extractAndStore(Method method) {
+    private void buildBeanAndStore(Method method) {
         Class<?> configClass = method.getDeclaringClass();
         String beanNameBase = method.getAnnotation(AppComponent.class).name();
         if (appComponentsByName.containsKey(beanNameBase)) {
             throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
         }
-        Class<?> returnType = method.getReturnType();
-        String beanNameByType = returnType.getName();
 
         Object noArgInstance = getNoArgInstance(configClass);
         Object[] args = Arrays.stream(method.getParameterTypes())
-                .map(par -> getAppComponent(par.getName()))
+                .map(this::getAppComponent)
                 .toArray(Object[]::new);
         Object bean = invokeMethod(method, noArgInstance, args);
+        Class<?> beanType = bean.getClass();
 
-        String beanNameByClass = bean.getClass().getName();
+        this.appComponentsByName.put(beanNameBase, bean);
+        store(beanType, bean);
 
-        store(beanNameBase, bean);
-        store(beanNameByType, bean);
-        store(beanNameByClass, bean);
+        Class<?> methodReturnType = method.getReturnType();
+
+        if (methodReturnType != beanType) {
+            store(methodReturnType, bean);
+        }
     }
 
-    private void store(String name, Object bean) {
-        List<Object> beans = Optional.ofNullable(appComponentsByName.get(name)).orElse(new ArrayList<>());
+    private void store(Class<?> beanType, Object bean) {
+        List<Object> beans = Optional.ofNullable(this.appComponentsByType.get(beanType)).orElse(new ArrayList<>());
         beans.add(bean);
-        appComponentsByName.put(name, beans);
+        this.appComponentsByType.put(beanType, beans);
     }
 
     private void checkConfigClass(Class<?>... configClasses) {
@@ -80,17 +83,19 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
-        return getAppComponent(componentClass.getTypeName());
+        List<Object> beans = this.appComponentsByType.get(componentClass);
+        if (beans == null) {
+            throw new ContextException(BEAN_BY_NAME_DOES_NOT_CONTAINS.formatted(componentClass.getName()));
+        } else if (beans.size() > 1) {
+            throw new ContextException(MORE_THEN_ONE_IMPL.formatted(componentClass.getName()));
+        }
+        return uncheckedCast(beans.get(0));
     }
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        List<Object> beans = this.appComponentsByName.get(componentName);
-        if (beans == null) {
-            throw new ContextException(BEAN_BY_NAME_DOES_NOT_CONTAINS.formatted(componentName));
-        } else if (beans.size() > 1) {
-            throw new ContextException(MORE_THEN_ONE_IMPL.formatted(componentName));
-        }
-        return uncheckedCast(beans.get(0));
+        Object bean = Optional.ofNullable(this.appComponentsByName.get(componentName))
+                .orElseThrow(() -> new ContextException(BEAN_BY_NAME_DOES_NOT_CONTAINS.formatted(componentName)));
+        return uncheckedCast(bean);
     }
 }

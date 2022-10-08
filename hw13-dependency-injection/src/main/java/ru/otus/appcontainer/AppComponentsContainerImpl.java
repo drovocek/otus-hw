@@ -6,6 +6,7 @@ import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 
 import java.util.*;
 
+import static ru.otus.appcontainer.ContextException.*;
 import static ru.otus.appcontainer.ReflectionUtils.*;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
@@ -29,7 +30,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .forEach(method -> {
                     String beanNameBase = method.getAnnotation(AppComponent.class).name();
                     if (appComponentsByName.containsKey(beanNameBase)) {
-                        throw new RuntimeException();
+                        throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanNameBase));
                     }
                     Class<?> returnType = method.getReturnType();
                     String beanNameByType = returnType.getName();
@@ -69,9 +70,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     public <C> C getAppComponent(String componentName) {
         List<Object> beans = this.appComponentsByName.get(componentName);
         if (beans == null) {
-            throw new RuntimeException();
+            throw new ContextException(BEAN_BY_NAME_DOES_NOT_CONTAINS.formatted(componentName));
         } else if (beans.size() > 1) {
-            throw new RuntimeException();
+            throw new ContextException(MORE_THEN_ONE_IMPL.formatted(componentName));
         }
         return uncheckedCast(beans.get(0));
     }

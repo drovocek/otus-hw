@@ -3,8 +3,8 @@ package ru.otus.processor.homework;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.otus.model.Message;
-import ru.otus.model.ObjectForMessage;
+import ru.otus.crm.model.Message;
+import ru.otus.crm.model.ObjectForMessage;
 
 class ProcessorSwitchField11AndField12Test {
 

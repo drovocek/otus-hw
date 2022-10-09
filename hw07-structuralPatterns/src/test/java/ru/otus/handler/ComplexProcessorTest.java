@@ -4,7 +4,7 @@ package ru.otus.handler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.listener.Listener;
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 import ru.otus.processor.Processor;
 
 import java.util.ArrayList;

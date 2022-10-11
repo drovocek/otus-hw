@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 
 import java.time.LocalTime;
 import java.util.stream.Stream;

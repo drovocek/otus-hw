@@ -1,6 +1,6 @@
 package ru.otus.processor;
 
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 
 public class ProcessorUpperField10 implements Processor {
 

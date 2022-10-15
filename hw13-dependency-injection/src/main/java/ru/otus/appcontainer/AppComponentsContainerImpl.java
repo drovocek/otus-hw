@@ -15,7 +15,7 @@ import static ru.otus.appcontainer.ReflectionUtils.*;
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private final Map<String, Object> appComponentsByName = new HashMap<>();
-    private final Map<Class<?>, List<Object>> appComponentsByType = new HashMap<>();
+    private final List<Object> appComponents = new ArrayList<>();
 
     public AppComponentsContainerImpl(String configsPath) {
         Reflections reflections = new Reflections(configsPath);
@@ -46,6 +46,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         });
     }
 
+    private record BeanData(String name, Object bean) {
+    }
+
     private Stream<BeanData> extractBeanData(Class<?> configClass) {
         return Arrays.stream(configClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(AppComponent.class))
@@ -54,7 +57,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .map(this::extractBeanData);
     }
 
-    private Method throwIfBeanNameIsRegistered(Method method){
+    private Method throwIfBeanNameIsRegistered(Method method) {
         String beanName = method.getAnnotation(AppComponent.class).name();
         if (appComponentsByName.containsKey(beanName)) {
             throw new ContextException(DUPLICATE_BEAN_NAME.formatted(beanName));
@@ -62,15 +65,12 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         return method;
     }
 
-    private record BeanData(String name, Object bean, Class<?> parentType) {
-    }
-
     private BeanData extractBeanData(Method method) {
         Class<?> configClass = method.getDeclaringClass();
         String beanName = method.getAnnotation(AppComponent.class).name();
         Object bean = buildBean(method, configClass);
 
-        return new BeanData(beanName, bean, method.getReturnType());
+        return new BeanData(beanName, bean);
     }
 
     private Object buildBean(Method method, Class<?> configClass) {
@@ -83,27 +83,16 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void store(BeanData beanData) {
         Object bean = beanData.bean;
-        this.appComponentsByName.put(beanData.name, beanData.bean);
-
-        Class<?> beanType = bean.getClass();
-        store(beanType, bean);
-
-        Class<?> parentType = beanData.parentType();
-        if (parentType != beanType) {
-            store(parentType, bean);
-        }
-    }
-
-    private void store(Class<?> beanType, Object bean) {
-        List<Object> beans = Optional.ofNullable(this.appComponentsByType.get(beanType)).orElse(new ArrayList<>());
-        beans.add(bean);
-        this.appComponentsByType.put(beanType, beans);
+        this.appComponentsByName.put(beanData.name, bean);
+        this.appComponents.add(bean);
     }
 
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
-        List<Object> beans = this.appComponentsByType.get(componentClass);
-        if (beans == null) {
+        List<Object> beans = this.appComponents.stream()
+                .filter(bean -> componentClass.isAssignableFrom(bean.getClass()))
+                .toList();
+        if (beans.isEmpty()) {
             throw new ContextException(BEAN_BY_NAME_DOES_NOT_CONTAINS.formatted(componentClass.getName()));
         } else if (beans.size() > 1) {
             throw new ContextException(MORE_THEN_ONE_IMPL.formatted(componentClass.getName()));

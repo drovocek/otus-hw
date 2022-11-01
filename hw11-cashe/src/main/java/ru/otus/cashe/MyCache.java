@@ -28,15 +28,15 @@ public class MyCache<K, V> implements HwCache<K, V> {
         callListeners(key, value, Action.REMOVE);
     }
 
-    private void callListeners(K key, V value, Action action) {
-        this.listeners.forEach(listener -> listener.notify(key, value, action.name()));
-    }
-
     @Override
     public V get(K key) {
         V value = this.cache.get(key);
         callListeners(key, value, Action.GET);
         return value;
+    }
+
+    private void callListeners(K key, V value, Action action) {
+        this.listeners.forEach(listener -> listener.notify(key, value, action.name()));
     }
 
     @Override

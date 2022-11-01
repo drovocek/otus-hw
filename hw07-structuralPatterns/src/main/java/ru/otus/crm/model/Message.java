@@ -1,4 +1,4 @@
-package ru.otus.model;
+package ru.otus.crm.model;
 
 import java.util.Optional;
 

@@ -17,8 +17,10 @@ allprojects {
             imports {
                 mavenBom "org.springframework.boot:spring-boot-dependencies:${Versions.springBoot}"
                 mavenBom "org.testcontainers:testcontainers-bom:${Versions.testContainers}"
+                mavenBom "com.google.protobuf:protobuf-bom:${Versions.protobuf}"
             }
             dependency "com.google.guava:guava:${Versions.guava}"
+            dependency "org.glassfish:jakarta.json:${Versions.glassfishJson}"
         }
     }
 }

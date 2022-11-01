@@ -1,6 +1,6 @@
 package ru.otus.listener;
 
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 
 public class ListenerPrinterConsole implements Listener {
 

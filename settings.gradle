@@ -8,5 +8,7 @@ include 'hw06-gof'
 include 'hw07-structuralPatterns'
 include 'hw08-serialization'
 include 'hw09-custom-orm'
+include 'hw10-hibernate'
+include 'hw12-webServer'
 include 'hw13-dependency-injection'
 

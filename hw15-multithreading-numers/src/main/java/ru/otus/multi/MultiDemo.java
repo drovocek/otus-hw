@@ -12,32 +12,37 @@ import lombok.SneakyThrows;
 public class MultiDemo {
 
     private static final int[] numbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    private static String last = "Second";
 
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Thread(MultiDemo::print);
+    public static void main(String[] args) {
+        MultiDemo demo = new MultiDemo();
+        Thread t1 = new Thread(demo::print);
         t1.setName("First");
-        Thread t2 = new Thread(MultiDemo::print);
-        t2.setName("Second");
+        Thread t2 = new Thread(demo::print);
+        t2.setName(last);
         t1.start();
-        Thread.sleep(200);
         t2.start();
     }
 
-    @SneakyThrows
-    private synchronized static void print() {
+    private synchronized void print() {
         for (int i = 0; i < numbers.length; i++) {
-            System.out.println(Thread.currentThread().getName() + ": " + numbers[i]);
-            MultiDemo.class.notifyAll();
-            MultiDemo.class.wait();
-            Thread.sleep(200);
+            print(i);
         }
 
         for (int i = numbers.length - 1; i >= 0; i--) {
-            System.out.println(Thread.currentThread().getName() + ": " + numbers[i]);
-            MultiDemo.class.notifyAll();
-            MultiDemo.class.wait();
-            Thread.sleep(200);
+            print(i);
         }
-        MultiDemo.class.notifyAll();
+    }
+
+    @SneakyThrows
+    private void print(int i) {
+        String currThreadName = Thread.currentThread().getName();
+        while (last.equals(currThreadName)) {
+            wait();
+        }
+        System.out.println(Thread.currentThread().getName() + ": " + numbers[i]);
+        last = currThreadName;
+        Thread.sleep(200);
+        notifyAll();
     }
 }

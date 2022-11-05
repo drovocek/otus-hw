@@ -1,6 +1,6 @@
 package ru.otus.dataprocessor;
 
-import ru.otus.model.Measurement;
+import ru.otus.crm.model.Measurement;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;

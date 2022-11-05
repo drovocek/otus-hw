@@ -1,6 +1,6 @@
 package ru.otus.handler;
 
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 import ru.otus.listener.Listener;
 
 public interface Handler {

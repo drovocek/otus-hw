@@ -1,6 +1,6 @@
 package ru.otus.listener.homework;
 
-import ru.otus.model.Message;
+import ru.otus.crm.model.Message;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package ru.otus.model;
+package ru.otus.crm.model;
 
 
 //Допустим, этот класс библиотечный, его нельзя менять

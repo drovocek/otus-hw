@@ -6,12 +6,20 @@ import ru.otus.data.model.Client;
 import ru.otus.data.model.Phone;
 import ru.otus.web.dto.ClientDto;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class ClientUtils {
+
+    public List<ClientDto> asDto(Collection<Client> clients) {
+        return clients.stream()
+                .map(ClientUtils::asDto)
+                .toList();
+    }
 
     public ClientDto asDto(Client client) {
         return ClientDto.builder()

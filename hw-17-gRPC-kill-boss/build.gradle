@@ -8,6 +8,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
+    implementation 'ch.qos.logback:logback-classic'
     implementation "io.grpc:grpc-netty"
     implementation "io.grpc:grpc-protobuf"
     implementation "io.grpc:grpc-stub"

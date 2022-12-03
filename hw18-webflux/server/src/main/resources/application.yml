@@ -1,22 +1,17 @@
 server.port: ${PORT:9090}
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5430/hw18data
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5430/hw18data
     username: usr
     password: pwd
-#  r2dbc:
-#    url: r2dbc:postgresql://localhost:5430/hw18data
-#    username: usr
-#    password: pwd
-#  flyway:
-#    url: jdbc:postgresql://localhost:5430/hw18data
-#    user: usr
-#    password: pwd
   flyway:
-     enabled: true
-     validateMigrationNaming: true
-
+    url: jdbc:postgresql://localhost:5430/hw18data
+    user: usr
+    password: pwd
+    enabled: true
+    validateMigrationNaming: true
+    baseline-on-migrate: true
 
 logging:
   level:

@@ -1,13 +1,12 @@
 package ru.otus.client.service;
 
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.dto.ClientDto;
-
-import java.util.Collection;
 
 public interface DataServiceProxy {
 
-    Collection<ClientDto> getAllClients();
+    Flux<ClientDto> getAllClients();
 
-    ClientDto saveClient(ClientDto dto);
+    Mono<ClientDto> saveClient(ClientDto dto);
 }

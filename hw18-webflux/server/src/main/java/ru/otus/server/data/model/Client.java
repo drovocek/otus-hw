@@ -2,38 +2,46 @@ package ru.otus.server.data.model;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Set;
 import java.util.UUID;
 
+@ToString
 @Getter
-@ToString(callSuper = true)
-public class Client extends BaseEntity {
+@Table("client")
+public class Client implements Persistable<UUID> {
 
-    @Column(value = "name")
+    @Id
+    private final UUID id;
+    @Column("name")
     private final String name;
-
-    @MappedCollection(idColumn = "client_id")
-    private final Address address;
-
-    @MappedCollection(idColumn = "client_id")
-    private final Set<Phone> phones;
-
-    public Client(UUID id, String name, Address address, Set<Phone> phones, boolean isNew) {
-        super(id, isNew);
-        this.name = name;
-        this.address = address;
-        this.phones = phones;
-    }
+    @Column("street")
+    private final String street;
+    @Column("phone")
+    private final String phone;
+    @Transient
+    private final boolean isNew;
 
     @PersistenceCreator
-    public Client(UUID id, String name, Address address, Set<Phone> phones) {
-        super(id, false);
+    public Client(UUID id, String name, String street, String phone) {
+        this.id = id;
         this.name = name;
-        this.address = address;
-        this.phones = phones;
+        this.street = street;
+        this.phone = phone;
+        this.isNew = false;
+    }
+
+    public Client(UUID id, String name, String street, String phone, boolean isNew) {
+        this.id = id;
+        this.name = name;
+        this.street = street;
+        this.phone = phone;
+        this.isNew = isNew;
     }
 }
+

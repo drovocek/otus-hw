@@ -1,11 +1,9 @@
 package ru.otus.server.data.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import ru.otus.server.data.model.Client;
 
-import java.util.List;
+import java.util.UUID;
 
-public interface ClientRepository extends CrudRepository<Client, Long> {
-
-    List<Client> findAll();
+public interface ClientRepository extends ReactiveCrudRepository<Client, UUID> {
 }

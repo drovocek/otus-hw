@@ -2,54 +2,53 @@ package ru.otus.client.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.dto.ClientDto;
-
-import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DataServiceProxyImpl implements DataServiceProxy {
 
-    private final RestTemplate restTemplate;
+    private final WebClient datastoreClient;
 
     @Value("${datastore.url}")
     private String dataServiceUrl;
 
     @Override
-    public Collection<ClientDto> getAllClients() {
-        ResponseEntity<List<ClientDto>> response = this.restTemplate.exchange(
-                dataServiceUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                });
-
-        if (response.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalStateException(
-                    String.format("Received %s error from data server when getting clients", response.getStatusCode()));
-        }
-
-        List<ClientDto> clientsDto = response.getBody();
-
-        Assert.notNull(clientsDto, "Clients body response can't be null");
-
-        return clientsDto;
+    public Flux<ClientDto> getAllClients() {
+        return this.datastoreClient
+                .get()
+                .uri(this.dataServiceUrl)
+                .accept(MediaType.APPLICATION_NDJSON)
+                .exchangeToFlux(
+                        response -> {
+                            if (response.statusCode().equals(HttpStatus.OK)) {
+                                return response.bodyToFlux(ClientDto.class);
+                            } else {
+                                return response.createException().flatMapMany(Mono::error);
+                            }
+                        });
     }
 
     @Override
-    public ClientDto saveClient(ClientDto dto) {
-        return this.restTemplate.postForObject(
-                dataServiceUrl,
-                new HttpEntity<>(dto),
-                ClientDto.class);
+    public Mono<ClientDto> saveClient(ClientDto dto) {
+        return this.datastoreClient
+                .post()
+                .uri(this.dataServiceUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(dto)
+                .exchangeToMono(
+                        response -> {
+                            if (response.statusCode().equals(HttpStatus.OK)) {
+                                return response.bodyToMono(ClientDto.class);
+                            } else {
+                                return response.createException().flatMap(Mono::error);
+                            }
+                        });
     }
 }

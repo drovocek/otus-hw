@@ -11,4 +11,6 @@ public interface Versions {
     String grpc = "1.44.1";
     String errorProneAnnotations = "2.11.0";
     String tomcatAnnotationsApi = "6.0.53";
+    String bootstrap = "5.1.3";
+    String jQuery = "3.6.1";
 }

@@ -18,5 +18,5 @@ public class ClientDto {
 
     private String street;
 
-    private String number;
+    private String phone;
 }

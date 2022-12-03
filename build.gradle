@@ -25,6 +25,9 @@ allprojects {
             dependency("io.grpc:grpc-netty:${Versions.grpc}")
             dependency("io.grpc:grpc-protobuf:${Versions.grpc}")
             dependency("io.grpc:grpc-stub:${Versions.grpc}")
+
+            dependency("org.webjars:bootstrap:${Versions.bootstrap}")
+            dependency("org.webjars:jquery:${Versions.jQuery}")
         }
     }
 }

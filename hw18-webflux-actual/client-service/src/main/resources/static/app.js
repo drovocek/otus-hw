@@ -21,10 +21,8 @@ const connect = () => {
         setConnected(true);
 
         const roomId = document.getElementById(roomIdElementId).value;
-        console.log('!!!!!!!!!!!!!')
-        console.log(roomId)
-        console.log(roomId === '1408')
-        document.getElementById(messageBlockId).style.visibility = (roomId === '1408')? 'hidden': 'visible';
+
+        document.getElementById(messageBlockId).style.visibility = (roomId === '1408') ? 'hidden' : 'visible';
         console.log(`Connected to roomId: ${roomId} frame:${frame}`);
         stompClient.subscribe(`/topic/response.${roomId}`, (message) => showMessage(JSON.parse(message.body).messageStr));
     });

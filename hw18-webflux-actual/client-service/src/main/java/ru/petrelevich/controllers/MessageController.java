@@ -22,6 +22,7 @@ public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
+    private static final String SPECIAL_ROOM_ID = "1408";
 
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;

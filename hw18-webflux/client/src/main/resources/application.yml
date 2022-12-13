@@ -1,0 +1,5 @@
+server.port: ${PORT:8080}
+datastore.url: http://localhost:9090/api/clients
+spring:
+  thymeleaf:
+    cache: false

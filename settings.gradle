@@ -20,4 +20,5 @@ include 'hw18-webflux'
 include 'hw18-webflux:client'
 include 'hw18-webflux:server'
 include 'hw18-webflux:common'
-
+include 'hw18-webflux-actual:client-service'
+include 'hw18-webflux-actual:datastore-service'

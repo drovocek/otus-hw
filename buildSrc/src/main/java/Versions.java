@@ -13,4 +13,6 @@ public interface Versions {
     String tomcatAnnotationsApi = "6.0.53";
     String bootstrap = "5.1.3";
     String jQuery = "3.6.1";
+    String sockjs = "1.5.1";
+    String stomp = "2.3.4";
 }
